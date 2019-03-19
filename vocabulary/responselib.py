@@ -5,25 +5,28 @@
 The MIT License (MIT)
 Copyright © 2017 Chizzy Alaedu
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
-associated documentation files (the “Software”), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the
-following conditions:
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the “Software”), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+of the Software, and to permit persons to whom the Software is furnished to do
+so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in all copies or substantial
-portions of the Software.
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT
-LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 """
 
 import json
 
-__version__ = '0.0.1'
+__version__ = "0.0.1"
 __author__ = "Chizzy Alaedu"
 
 
@@ -49,7 +52,7 @@ class Response(object):
             for key, value in enumerate(temp_data):
                 data[key] = value
 
-        data.pop('seq', None)
+        data.pop("seq", None)
         for index, item in data.items():
             values = item
             if isinstance(item, list) or isinstance(item, dict):
@@ -70,7 +73,7 @@ class Response(object):
         """
         response = []
         if isinstance(data, dict):
-            data.pop('seq', None)
+            data.pop("seq", None)
             data = list(data.values())
 
         for item in data:
@@ -85,7 +88,7 @@ class Response(object):
 
         return response
 
-    def respond(self, data, format='json'):
+    def respond(self, data, format="json"):
         """
         Converts a json object to a python datastructure based on
         specified format
@@ -96,7 +99,7 @@ class Response(object):
         """
         dispatchers = {
             "dict": self.__respond_with_dict,
-            "list": self.__respond_with_list
+            "list": self.__respond_with_list,
         }
 
         if not dispatchers.get(format, False):

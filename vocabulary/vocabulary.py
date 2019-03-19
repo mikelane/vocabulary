@@ -3,22 +3,25 @@
 
 """
 The MIT License (MIT)
-Copyright © 2015 Tasdik Rahman
+Copyright © 2017 Chizzy Alaedu
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
-associated documentation files (the “Software”), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the
-following conditions:
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the “Software”), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+of the Software, and to permit persons to whom the Software is furnished to do
+so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in all copies or substantial
-portions of the Software.
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT
-LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 """
 
 import json
@@ -32,7 +35,7 @@ from .version import VERSION, RELEASE
 
 
 @contextlib.contextmanager
-def try_URL(message='Connection Lost'):
+def try_URL(message="Connection Lost"):
     try:
         yield
     except requests.exceptions.ConnectionError:
@@ -62,14 +65,16 @@ class Vocabulary(object):
         """
         returns API links
 
-        :param api: possible values are "wordnik", "glosbe", "urbandict", "bighugelabs"
-        :returns: returns API links to urbandictionary, wordnik, glosbe, bighugelabs
+        :param api: possible values are "wordnik", "glosbe", "urbandict",
+                    "bighugelabs"
+        :returns: returns API links to urbandictionary, wordnik, glosbe,
+                  bighugelabs
         """
         api_name2links = {
-            "wordnik": "http://api.wordnik.com/v4/word.json/{word}/{action}?api_key=1e940957819058fe3ec7c59d43c09504b400110db7faa0509",
-            "glosbe": "https://glosbe.com/gapi/translate?from={source_lang}&dest={dest_lang}&format=json&pretty=true&phrase={word}",
-            "urbandict": "http://api.urbandictionary.com/v0/{action}?term={word}",
-            "bighugelabs": "http://words.bighugelabs.com/api/2/eb4e57bb2c34032da68dfeb3a0578b68/{word}/json"
+            "wordnik": "http://api.wordnik.com/v4/word.json/{word}/{action}?api_key=1e940957819058fe3ec7c59d43c09504b400110db7faa0509",  # noqa: E501
+            "glosbe": "https://glosbe.com/gapi/translate?from={source_lang}&dest={dest_lang}&format=json&pretty=true&phrase={word}",  # noqa: E501
+            "urbandict": "http://api.urbandictionary.com/v0/{action}?term={word}",  # noqa: E501
+            "bighugelabs": "http://words.bighugelabs.com/api/2/eb4e57bb2c34032da68dfeb3a0578b68/{word}/json",  # noqa: E501
         }
 
         return api_name2links.get(api, False)
@@ -82,7 +87,8 @@ class Vocabulary(object):
          - meaning()
          - synonym()
 
-        :param url: the complete formatted url which is then queried using requests
+        :param url: the complete formatted url which is then queried using
+                    requests
         :returns: json content being fed by the API
         """
         with try_URL():
@@ -105,7 +111,8 @@ class Vocabulary(object):
          - synonym()
 
         :param tuc_content: passed on the calling Function. A list object
-        :param content_to_be_parsed: data to be parsed from. Whether to parse "tuc" for meanings or synonyms
+        :param content_to_be_parsed: data to be parsed from. Whether to parse
+               "tuc" for meanings or synonyms
         :returns: returns a list which contains the parsed data from "tuc"
         """
         initial_parsed_content = {}
@@ -116,12 +123,12 @@ class Vocabulary(object):
                 contents_raw = content_dict[content_to_be_parsed]
                 if content_to_be_parsed == "phrase":
                     # for 'phrase', 'contents_raw' is a dictionary
-                    initial_parsed_content[i] = contents_raw['text']
+                    initial_parsed_content[i] = contents_raw["text"]
                     i += 1
                 elif content_to_be_parsed == "meanings":
                     # for 'meanings', 'contents_raw' is a list
                     for meaning_content in contents_raw:
-                        initial_parsed_content[i] = meaning_content['text']
+                        initial_parsed_content[i] = meaning_content["text"]
                         i += 1
 
         final_parsed_content = {}
@@ -138,7 +145,8 @@ class Vocabulary(object):
     @staticmethod
     def __clean_dict(dictionary):
         """
-        Takes the dictionary from __parse_content() and creates a well formatted list
+        Takes the dictionary from __parse_content() and creates a well
+        formatted list
 
         :param dictionary: unformatted dict
         :returns: a list which contains dict's as it's elements
@@ -152,7 +160,9 @@ class Vocabulary(object):
         for value in dictionary.values():
             value_dict[value] = "text"
 
-        for (key1, value1), (key2, value2) in zip(key_dict.items(), value_dict.items()):
+        for (key1, value1), (key2, value2) in zip(
+            key_dict.items(), value_dict.items()
+        ):
             final_list.append({value1: int(key1), value2: key2})
 
         return final_list
@@ -169,7 +179,9 @@ class Vocabulary(object):
         :returns: returns a json object as str, False if invalid phrase
         """
         base_url = Vocabulary.__get_api_link("glosbe")
-        url = base_url.format(word=phrase, source_lang=source_lang, dest_lang=dest_lang)
+        url = base_url.format(
+            word=phrase, source_lang=source_lang, dest_lang=dest_lang
+        )
         json_obj = Vocabulary.__return_json(url)
 
         if json_obj:
@@ -177,7 +189,7 @@ class Vocabulary(object):
                 tuc_content = json_obj["tuc"]  # "tuc_content" is a "list"
             except KeyError:
                 return False
-            '''get meanings'''
+            """get meanings"""
             meanings_list = Vocabulary.__parse_content(tuc_content, "meanings")
             return Response().respond(meanings_list, format)
             # print(meanings_list)
@@ -198,7 +210,9 @@ class Vocabulary(object):
         :returns: returns a json object as str, False if invalid phrase
         """
         base_url = Vocabulary.__get_api_link("glosbe")
-        url = base_url.format(word=phrase, source_lang=source_lang, dest_lang=dest_lang)
+        url = base_url.format(
+            word=phrase, source_lang=source_lang, dest_lang=dest_lang
+        )
         json_obj = Vocabulary.__return_json(url)
         if json_obj:
             try:
@@ -222,13 +236,15 @@ class Vocabulary(object):
     @staticmethod
     def translate(phrase, source_lang, dest_lang, format="json"):
         """
-            Gets the translations for a given word, and returns possibilites as a list
-            Calls the glosbe API for getting the translation
+            Gets the translations for a given word, and returns possibilites as
+            a list. Calls the glosbe API for getting the translation
 
-            <source_lang> and <dest_lang> languages should be specifed in 3-letter ISO 639-3 format,
-            although many 2-letter codes (en, de, fr) will work.
+            <source_lang> and <dest_lang> languages should be specifed in
+            3-letter ISO 639-3 format, although many 2-letter codes (en, de,
+            fr) will work.
 
-            See http://en.wikipedia.org/wiki/List_of_ISO_639-3_codes for full list.
+            See http://en.wikipedia.org/wiki/List_of_ISO_639-3_codes for full
+            list.
 
             :param phrase:  word for which translation is being found
             :param source_lang: Translation from language
@@ -237,14 +253,18 @@ class Vocabulary(object):
             :returns: returns a json object as str, False if invalid phrase
             """
         base_url = Vocabulary.__get_api_link("glosbe")
-        url = base_url.format(word=phrase, source_lang=source_lang, dest_lang=dest_lang)
+        url = base_url.format(
+            word=phrase, source_lang=source_lang, dest_lang=dest_lang
+        )
         json_obj = Vocabulary.__return_json(url)
         if json_obj:
             try:
                 tuc_content = json_obj["tuc"]  # "tuc_content" is a "list"
             except KeyError:
                 return False
-            translations_list = Vocabulary.__parse_content(tuc_content, "phrase")
+            translations_list = Vocabulary.__parse_content(
+                tuc_content, "phrase"
+            )
             if translations_list:
                 # return synonyms_list
                 # return json.dumps(translations_list)
@@ -283,7 +303,7 @@ class Vocabulary(object):
         visited = {}
         idx = 0
         for key in json_obj.keys():
-            antonyms = json_obj[key].get('ant', False)
+            antonyms = json_obj[key].get("ant", False)
             if not antonyms:
                 continue
 
@@ -291,7 +311,7 @@ class Vocabulary(object):
                 if visited.get(antonym, False):
                     continue
 
-                result.append({'seq': idx, 'text': antonym})
+                result.append({"seq": idx, "text": antonym})
                 idx += 1
                 visited[antonym] = True
 
@@ -301,9 +321,10 @@ class Vocabulary(object):
         return Response().respond(result, format)
 
     @staticmethod
-    def part_of_speech(phrase, format='json'):
+    def part_of_speech(phrase, format="json"):
         """
-        querrying Wordnik's API for knowing whether the word is a noun, adjective and the like
+        querrying Wordnik's API for knowing whether the word is a noun,
+        adjective and the like
 
         :params phrase: word for which part_of_speech is to be found
         :param format: response structure type. Defaults to: "json"
@@ -319,14 +340,14 @@ class Vocabulary(object):
 
         result = []
         for idx, obj in enumerate(json_obj):
-            text = obj.get('partOfSpeech', None)
-            example = obj.get('text', None)
+            text = obj.get("partOfSpeech", None)
+            example = obj.get("text", None)
             result.append({"seq": idx, "text": text, "example": example})
 
         return Response().respond(result, format)
 
     @staticmethod
-    def usage_example(phrase, format='json'):
+    def usage_example(phrase, format="json"):
         """Takes the source phrase and queries it to the urbandictionary API
 
         :params phrase: word for which usage_example is to be found
@@ -341,19 +362,23 @@ class Vocabulary(object):
             examples_list = json_obj["list"]
             for i, example in enumerate(examples_list):
                 if example["thumbs_up"] > example["thumbs_down"]:
-                    word_examples[i] = example["example"].replace("\r", "").replace("\n", "")
+                    word_examples[i] = (
+                        example["example"].replace("\r", "").replace("\n", "")
+                    )
             if word_examples:
                 # reforamatting "word_examples" using "__clean_dict()"
                 # return json.dumps(Vocabulary.__clean_dict(word_examples))
                 # return Vocabulary.__clean_dict(word_examples)
-                return Response().respond(Vocabulary.__clean_dict(word_examples), format)
+                return Response().respond(
+                    Vocabulary.__clean_dict(word_examples), format
+                )
             else:
                 return False
         else:
             return False
 
     @staticmethod
-    def pronunciation(phrase, format='json'):
+    def pronunciation(phrase, format="json"):
         """
         Gets the pronunciation from the Wordnik API
 
@@ -365,15 +390,15 @@ class Vocabulary(object):
         url = base_url.format(word=phrase.lower(), action="pronunciations")
         json_obj = Vocabulary.__return_json(url)
         if json_obj:
-            '''
+            """
             Refer : http://stackoverflow.com/q/18337407/3834059
-            '''
-            ## TODO: Fix the unicode issue mentioned in
-            ## https://github.com/tasdikrahman/vocabulary#181known-issues
+            """
+            # TODO: Fix the unicode issue mentioned in
+            # https://github.com/tasdikrahman/vocabulary#181known-issues
             for idx, obj in enumerate(json_obj):
-                obj['seq'] = idx
+                obj["seq"] = idx
 
-            if sys.version_info[:2] <= (2, 7):  ## python2
+            if sys.version_info[:2] <= (2, 7):  # python2
                 # return json_obj
                 return Response().respond(json_obj, format)
             else:  # python3
@@ -383,7 +408,7 @@ class Vocabulary(object):
             return False
 
     @staticmethod
-    def hyphenation(phrase, format='json'):
+    def hyphenation(phrase, format="json"):
         """
         Returns back the stress points in the "phrase" passed
 

@@ -34,7 +34,7 @@ Or, if ``virtualenv`` is not installed on your system:
 
 .. code:: bash
 
-    (develop) $ ./tests.py -v
+    (develop) $ pytest
 
 Conform to `PEP8 <https://www.python.org/dev/peps/pep-0008/>`__ and if everything is running fine, integrate your feature
 
